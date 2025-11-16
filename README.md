@@ -228,4 +228,184 @@ Output: `add`
 
 ---
 
-If you want, I'll also make **Notes PDF / Word file**.
+
+# 🟢 Node.js – Backend Basics
+
+Node.js allows JavaScript to run on the server using Chrome's V8 engine.
+
+---
+
+# 1️⃣ File Path Module (path)
+
+Used to work with file and folder paths.
+
+### Import
+
+```js
+const path = require('path');
+```
+
+### Common Functions
+
+| Function           | Use                    |
+| ------------------ | ---------------------- |
+| `path.basename(p)` | Returns file name      |
+| `path.dirname(p)`  | Returns directory path |
+| `path.extname(p)`  | Returns file extension |
+| `path.join(a,b,c)` | Joins multiple paths   |
+| `path.resolve()`   | Gives absolute path    |
+
+### Example
+
+```js
+console.log(path.basename('/home/user/app.js')); // app.js
+```
+
+---
+
+# 2️⃣ HTTP Server in Node.js
+
+Allows you to create a backend server.
+
+### Import
+
+```js
+const http = require('http');
+```
+
+### Create Server
+
+```js
+const server = http.createServer((req, res) => {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Hello from Node.js Server');
+});
+
+server.listen(3000, () => console.log('Server running on port 3000'));
+```
+
+### How It Works
+
+* Client sends request
+* Server receives it
+* Responds using callback
+* Port defines where server listens
+
+---
+
+# 3️⃣ DNS Module
+
+Used for resolving domain names.
+
+### Import
+
+```js
+const dns = require('dns');
+```
+
+### Resolve Domain → IP
+
+```js
+dns.lookup('google.com', (err, address)=>{
+    console.log(address);
+});
+```
+
+### Resolve All Records
+
+```js
+dns.resolve4('github.com', (err, addresses)=>{
+    console.log(addresses);
+});
+```
+
+---
+
+# 4️⃣ How the Web Works (Short Notes)
+
+### Step-by-step
+
+1. User enters URL in browser
+2. Browser sends **DNS request** → gets IP
+3. Browser sends **HTTP request** to server
+4. Server processes request
+5. Server sends **response** (HTML/CSS/JS/data)
+6. Browser renders the page
+
+This entire process uses **protocols**.
+
+---
+
+# 5️⃣ Web Protocols (Important)
+
+| Protocol | Full Form                     | Use                                    |
+| -------- | ----------------------------- | -------------------------------------- |
+| HTTP     | HyperText Transfer Protocol   | Communication between browser & server |
+| HTTPS    | Secure HTTP                   | Encrypted communication                |
+| TCP      | Transmission Control Protocol | Reliable data transfer                 |
+| UDP      | User Datagram Protocol        | Fast data transfer (video/gaming)      |
+| DNS      | Domain Name System            | Converts domain to IP                  |
+| IP       | Internet Protocol             | Identifying devices                    |
+
+---
+
+# 6️⃣ Creating a Real Server (Full Example)
+
+```js
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const server = http.createServer((req, res) => {
+    const filePath = path.join(__dirname, 'index.html');
+
+    fs.readFile(filePath, 'utf-8', (err, data) => {
+        if(err){
+            res.writeHead(500, {'Content-Type': 'text/plain'});
+            return res.end('Server Error');
+        }
+
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(data);
+    });
+});
+
+server.listen(3000, () => console.log('Server running on port 3000...'));
+```
+
+### What This Does
+
+* Creates HTTP server
+* Reads HTML file
+* Sends HTML as response
+
+---
+
+# 7️⃣ Testing the Server
+
+### Run:
+
+```bash
+node server.js
+```
+
+Open in browser:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🎯 Summary
+
+* **path** → handles file paths
+* **http** → creates server
+* **dns** → resolves domains
+* Web works using **DNS → Request → Response**
+* Main protocols: **HTTP, HTTPS, TCP, UDP, DNS, IP**
+
+---
+
+
+

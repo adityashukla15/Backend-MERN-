@@ -634,4 +634,203 @@ http.createServer((req, res) => {
 
 ---
 
+---
+
+# 📌 1. **What Are Streams?**
+
+Streams are used in Node.js to **process data piece-by-piece** instead of loading the whole data in memory.
+
+### ✔ Why Streams?
+
+* Efficient memory usage
+* Faster data processing
+* Suitable for large files & continuous incoming data (video, logs)
+
+### ✔ Types of Streams
+
+1. **Readable Streams** → read data (fs.createReadStream)
+2. **Writable Streams** → write data (fs.createWriteStream)
+3. **Duplex Streams** → both read & write (net.Socket)
+4. **Transform Streams** → modify data while streaming (zlib)
+
+---
+
+# 📌 2. **What is a Chunk?**
+
+A “chunk” is a **small piece of data** read from a stream.
+
+Example: Reading a 1GB file → Node reads it in small chunks (64 KB default).
+
+### 📌 Reading Chunks Example
+
+```js
+const fs = require('fs');
+
+const stream = fs.createReadStream('input.txt');
+
+stream.on('data', (chunk) => {
+    console.log("Received chunk:");
+    console.log(chunk);
+});
+```
+
+`chunk` is a **Buffer**.
+
+---
+
+# 📌 3. **What is a Buffer?**
+
+A **Buffer** is temporary memory for handling binary data.
+Node uses buffers when reading data piece-by-piece.
+
+### Example of Buffer
+
+```js
+const buf = Buffer.from('Hello');
+console.log(buf); // <Buffer 48 65 6c 6c 6f>
+```
+
+---
+
+# 📌 4. **How Node Reads & Buffers Chunks**
+
+Lifecycle of streamed data:
+
+```
+Source File → Readable Stream → Chunks → Buffer → Your Code
+```
+
+### Flow in events:
+
+1. `data` → when new chunk arrives
+2. `end` → no more data
+3. `error` → file read error
+
+---
+
+# 📌 5. **Parsing Incoming Request Data (POST Request)**
+
+When user submits a form, data does NOT come at once.
+It arrives in **chunks**.
+
+### Example of reading request body:
+
+```js
+let body = '';
+
+req.on('data', (chunk) => {
+    body += chunk;
+});
+
+req.on('end', () => {
+    console.log("Full body: ", body);
+});
+```
+
+---
+
+# 📌 6. **Parsing Form Data**
+
+Assume HTML form:
+
+```html
+<form action="/submit" method="POST">
+  <input type="text" name="username">
+  <button type="submit">Send</button>
+</form>
+```
+
+### Parsing using URLSearchParams:
+
+```js
+req.on('end', () => {
+    const formData = new URLSearchParams(body);
+    const username = formData.get('username');
+
+    console.log("User submitted:", username);
+});
+```
+
+---
+
+# 📌 7. **Saving User Form Data into a Text File**
+
+```js
+const fs = require('fs');
+let body = '';
+
+req.on('data', chunk => {
+    body += chunk;
+});
+
+req.on('end', () => {
+    const params = new URLSearchParams(body);
+    const message = params.get('username');
+
+    fs.writeFile('user.txt', message, () => {
+        res.writeHead(302, { Location: '/' });
+        res.end();
+    });
+});
+```
+
+---
+
+# 📌 8. **Full Working Example — Stream + Chunk + Buffer + Form Save**
+
+```js
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+
+    if (req.url === '/' && req.method === 'GET') {
+        fs.readFile('form.html', (err, data) => {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
+    }
+
+    else if (req.url === '/submit' && req.method === 'POST') {
+        let body = '';
+
+        // Receiving chunks
+        req.on('data', chunk => {
+            body += chunk;
+        });
+
+        // Parsing request
+        req.on('end', () => {
+            const params = new URLSearchParams(body);
+            const username = params.get('username');
+
+            // Saving in file
+            fs.writeFile('output.txt', username, () => {
+                res.writeHead(302, { Location: '/' });
+                res.end();
+            });
+        });
+    }
+
+});
+
+server.listen(3000);
+```
+
+---
+
+# 📌 9. **Key Points to Remember**
+
+* Streams = process data in parts, not whole.
+* Chunks = small pieces of binary data.
+* Buffer = memory that stores chunk temporarily.
+* POST data arrives in chunks → combine and parse.
+* `URLSearchParams` helps extract values from form.
+* Write data to file using `fs.writeFile`.
+
+---
+
+
+
+
 

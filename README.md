@@ -407,5 +407,231 @@ http://localhost:3000
 
 ---
 
+# 📌 **1. Node.js Lifecycle Overview**
+
+Node.js runs JavaScript in a **single-threaded** environment but handles tasks asynchronously using **Event Loop**.
+
+### **Execution Lifecycle:**
+
+1. **Start** — Node.js loads your script.
+2. **Execute** — Runs code line-by-line.
+3. **Register Callbacks** — async functions (setTimeout, fs, http) register callbacks.
+4. **Event Loop Starts** — handles async tasks.
+5. **Keeps running until** no callbacks or timers left.
+6. **Exit process**.
+
+---
+
+# 📌 **2. Event Loop Explained (Very Simple)**
+
+Event Loop is the machine that decides **what code runs next**.
+
+### **Event Loop Phases:**
+
+1. **Timers Phase** → `setTimeout`, `setInterval`
+2. **Pending Callbacks Phase** → system-level callbacks
+3. **Idle / Prepare Phase**
+4. **Poll Phase** → waits for I/O
+5. **Check Phase** → `setImmediate`
+6. **Close Callbacks Phase**
+
+### **Event Loop Flow**
+
+```
+Call Stack → Event Queue → Event Loop → Callback Executes
+```
+
+Node will **NOT exit** until:
+
+* All timers are done
+* All I/O is complete
+* No pending callbacks
+
+---
+
+# 📌 **3. How to Exit the Event Loop**
+
+Node automatically exits when no work is pending.
+
+You can force exit using:
+
+```js
+process.exit();
+```
+
+Or exit with a code:
+
+```js
+process.exit(0);  // success
+process.exit(1);  // error
+```
+
+---
+
+# 📌 **4. Creating a Basic HTTP Server**
+
+```js
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Hello from Node Server!");
+});
+
+server.listen(3000, () => {
+    console.log("Server running on port 3000");
+});
+```
+
+---
+
+# 📌 **5. Understanding the Request Object (`req`)**
+
+`req` contains all the data sent by the client.
+
+### **Important Properties:**
+
+* `req.url` → which page user visited
+* `req.method` → GET, POST
+* `req.headers` → browser details
+
+Example:
+
+```js
+console.log(req.url);
+console.log(req.method);
+```
+
+---
+
+# 📌 **6. Sending Response (`res`)**
+
+`res` is used to send data back to browser.
+
+### **Basic Response:**
+
+```js
+res.writeHead(200, { "Content-Type": "text/plain" });
+res.write("Hello User!");
+res.end();
+```
+
+### **Sending JSON:**
+
+```js
+res.writeHead(200, { "Content-Type": "application/json" });
+res.end(JSON.stringify({ message: "Hi" }));
+```
+
+---
+
+# 📌 **7. Routing Requests**
+
+Manually route based on `req.url`.
+
+```js
+const http = require('http');
+
+http.createServer((req, res) => {
+    if (req.url === '/') {
+        res.end("Home Page");
+    } else if (req.url === '/about') {
+        res.end("About Page");
+    } else {
+        res.writeHead(404);
+        res.end("Page Not Found");
+    }
+}).listen(3000);
+```
+
+---
+
+# 📌 **8. Taking User Input From URL**
+
+Using query parameters:
+
+```
+http://localhost:3000/?name=aditya
+```
+
+```js
+const url = require('url');
+
+http.createServer((req, res) => {
+    const query = url.parse(req.url, true).query;
+
+    res.end(`Hello ${query.name}`);
+}).listen(3000);
+```
+
+---
+
+# 📌 **9. Redirecting Requests**
+
+Use **301 (permanent)** or **302 (temporary)** redirect.
+
+```js
+res.writeHead(302, { Location: '/newpage' });
+res.end();
+```
+
+---
+
+# 📌 **10. Serving an HTML Page**
+
+Using `fs.readFile()`:
+
+```js
+const fs = require('fs');
+const http = require('http');
+
+http.createServer((req, res) => {
+    if (req.url === '/') {
+        fs.readFile('index.html', (err, data) => {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(data);
+        });
+    }
+}).listen(3000);
+```
+
+---
+
+# 📌 **11. Full Example — Event Loop + Input + Routing + HTML**
+
+```js
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+
+http.createServer((req, res) => {
+    const parsed = url.parse(req.url, true);
+
+    if (parsed.pathname === '/') {
+        fs.readFile('index.html', (err, data) => {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(data);
+        });
+    }
+
+    else if (parsed.pathname === '/hello') {
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end(`Hello ${parsed.query.name}`);
+    }
+
+    else if (parsed.pathname === '/go') {
+        res.writeHead(302, { Location: '/' });
+        res.end();
+    }
+
+    else {
+        res.writeHead(404);
+        res.end("Not Found");
+    }
+
+}).listen(3000);
+```
+
+---
 
 

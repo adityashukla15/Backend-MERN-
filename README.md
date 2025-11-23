@@ -829,6 +829,231 @@ server.listen(3000);
 * Write data to file using `fs.writeFile`.
 
 ---
+# 🟦 Node.js Event-Driven Architecture & Event Loop
+
+## 📘 1. What is Event-Driven Architecture in Node.js?
+
+Node.js follows an **event-driven architecture**, meaning:
+
+* Code executes based on **events and callbacks**.
+* Instead of waiting for tasks, Node.js **registers callbacks** and continues execution.
+* Asynchronous tasks (file read, network calls) run via **libuv threadpool**.
+
+**Simple Definition:**
+Node.js handles tasks by listening for events and executing the assigned callback when the event is triggered.
+
+---
+
+## 📘 2. Node.js — Single Threaded Architecture
+
+Node.js executes JavaScript on **one thread** (single-threaded) using:
+
+* **V8 Engine** → runs JS.
+* **libuv** → handles async operations.
+
+### ⚡ Key Point:
+
+✔ Single-threaded **JavaScript execution**
+✔ Multi-threaded **async operations** via libuv
+
+---
+
+## 📘 3. V8 vs libuv (Difference)
+
+| Component     | Purpose                  | Handles                         |
+| ------------- | ------------------------ | ------------------------------- |
+| **V8 Engine** | Executes JavaScript code | Sync code, callbacks execution  |
+| **libuv**     | Manages async tasks      | FS, Network, Timers, Threadpool |
+
+**Simple Words:**
+
+* V8 = Brain of JS
+* libuv = Worker team (background tasks)
+
+---
+
+## 📘 4. Node.js Runtime Internals
+
+Node runtime = V8 + libuv + C++ bindings + APIs
+
+It manages:
+
+* Event loop
+* Threadpool
+* Callback queue
+* Microtask queue
+* Timers
+
+---
+
+# 🟦 Event Loop — The Heart of Node.js
+
+## 📘 5. What is the Event Loop?
+
+The **event loop** allows Node.js to handle:
+
+* Non-blocking I/O
+* Async operations
+* Callbacks execution
+
+While JavaScript is single-threaded, the event loop makes Node.js act **asynchronously**.
+
+---
+
+## 📘 6. Event Loop Phases (Simplified)
+
+```
+┌──────────────────────┐
+│ 1. Timers (setTimeout)│
+├──────────────────────┤
+│ 2. Pending Callbacks  │
+├──────────────────────┤
+│ 3. Idle, Prepare      │
+├──────────────────────┤
+│ 4. Poll (I/O events)  │
+├──────────────────────┤
+│ 5. Check (setImmediate)│
+├──────────────────────┤
+│ 6. Close Callbacks    │
+└──────────────────────┘
+```
+
+### Microtasks Queue (Highest Priority):
+
+* Promises (`.then`, `catch`)
+* `process.nextTick()`
+
+Executed **after each phase**.
+
+---
+
+## 📘 7. Priority Order Chart
+
+```
+process.nextTick()  → Highest Priority
+Microtasks (Promises)
+Timers → setTimeout, setInterval
+I/O callbacks
+Check → setImmediate
+Close callbacks
+```
+
+---
+
+# 🟦 8. How Async Code Works Internally (Full Cycle)
+
+Below is the **exact flow** of a non-blocking async operation:
+
+```
+JS Code → V8 Engine executes →
+Async task given to libuv →
+libuv handles I/O / threadpool →
+Callback returned to Event Loop →
+Event Loop executes callback through V8
+```
+
+### Detailed Step-by-Step:
+
+1. JavaScript code starts executing in **V8**.
+2. If async task occurs (`fs.readFile`, `setTimeout`):
+
+   * Sent to **libuv** threadpool or timers.
+3. libuv completes the task.
+4. Callback is pushed into event loop queues.
+5. Event loop picks the callback according to phase.
+6. Callback executed back inside **V8 engine**.
+
+---
+
+# 🟦 9. Blocking vs Non-Blocking Code
+
+## ✔ Blocking Code
+
+Stops execution until task completes.
+Example:
+
+```cpp
+const data = fs.readFileSync("file.txt");
+```
+
+## ✔ Non-Blocking Code
+
+Allows event loop to continue.
+
+```cpp
+fs.readFile("file.txt", (err, data) => {
+    console.log(data);
+});
+```
+
+### Why Avoid Blocking Code?
+
+* Blocks the event loop
+* Reduces performance
+* Makes server unresponsive
+
+---
+
+# 🟦 10. How Normal Functions & Async Callbacks Execute
+
+### ✔ Normal Functions
+
+* Run immediately in **V8**
+* Added to call stack
+* Completed before moving on
+
+### ✔ Async Callbacks
+
+* Offloaded to **libuv**
+* Returned when ready
+* Executed through event loop
+
+---
+
+# 🟦 11. Visual Diagram — Callbacks Flow
+
+```
+           Async Task
+        (fs / http / timer)
+                ↓
+         Sent to libuv
+                ↓
+         Completed by OS
+                ↓
+   Callback pushed to Event Loop
+                ↓
+     V8 executes callback finally
+```
+
+---
+
+# 🟦 12. Routing Requests (Quick Note)
+
+Node.js handles different routes using:
+
+```js
+if(req.url === "/home")
+```
+
+Event loop ensures multiple requests don’t block each other.
+
+---
+
+# 🟦 13. Final Summary 
+
+```
+Node.js is event-driven and single-threaded.
+V8 executes JS; libuv handles async work.
+Event loop has phases → timers, I/O, check, close.
+Microtasks run before every phase.
+Async tasks go to libuv and return to event loop.
+Blocking code blocks event loop → avoid it.
+Normal functions execute in V8; callbacks return from event loop.
+```
+
+---
+
+Bhai, pure Node.js event loop ka master-level notes ready hai. Agar tum chaho toh isko **PDF / DOCX** me convert kar
 
 
 

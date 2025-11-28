@@ -1051,9 +1051,302 @@ Blocking code blocks event loop → avoid it.
 Normal functions execute in V8; callbacks return from event loop.
 ```
 
+----
+# 📘 Express.js 
+
+## 🚀 What is Express.js?
+
+**Express.js** is a fast, minimalist, and flexible **Node.js web framework** used to build backend applications and APIs easily.
+
+### **Definition:**
+
+> Express.js is a lightweight web application framework for Node.js that simplifies handling requests, responses, routing, middleware, and server creation.
+
 ---
 
-Bhai, pure Node.js event loop ka master-level notes ready hai. Agar tum chaho toh isko **PDF / DOCX** me convert kar
+## ❓ Why Do We Need Express.js?
+
+### Without Express → Node.js is low-level
+
+* Manual request handling
+* Complex routing
+* Hard to manage middlewares
+* Repetitive boilerplate
+
+### With Express → Super easy
+
+* Simple routing
+* Built-in middleware support
+* Easy to send responses
+* Scalable structure
+
+---
+
+# ⚙️ Installing Express.js
+
+### Step 1: Create project folder
+
+```
+mkdir myapp
+cd myapp
+```
+
+### Step 2: Initialize Node project
+
+```
+npm init -y
+```
+
+### Step 3: Install Express
+
+```
+npm install express
+```
+
+---
+
+# 💡 Creating Your First Express Server
+
+```js
+const express = require("express");
+const app = express();
+
+app.listen(3000, () => {
+    console.log("Server Running at 3000");
+});
+```
+
+---
+
+# 🧱 What is Middleware in Express.js?
+
+Middleware = Function that runs **before** the final route handler.
+
+### Syntax:
+
+```js
+app.use((req, res, next) => {
+    console.log("Middleware executed");
+    next();
+});
+```
+
+### **Working:**
+
+```
+Request → Middleware → Route → Response
+```
+
+---
+
+# 📤 Sending Responses in Express
+
+### 1️⃣ Send text
+
+```js
+res.send("Hello World");
+```
+
+### 2️⃣ Send HTML
+
+```js
+res.send("<h1>Welcome</h1>");
+```
+
+### 3️⃣ Send JSON
+
+```js
+res.json({ message: "Success" });
+```
+
+### 4️⃣ Set status code
+
+```js
+res.status(404).send("Page Not Found");
+```
+
+---
+
+# 🔀 Routing in Express.js (The Heart of Express)
+
+Routing → Defines how your server responds to various URLs.
+
+## 📌 GET Request
+
+Used to fetch data.
+
+```js
+app.get('/', (req, res) => {
+    res.send("GET Request Received");
+});
+```
+
+---
+
+## 📌 POST Request
+
+Used to send data to server.
+
+```js
+app.post('/submit', (req, res) => {
+    res.send("POST Data Submitted");
+});
+```
+
+---
+
+## 📌 PUT Request
+
+Used to update existing data.
+
+```js
+app.put('/update', (req, res) => {
+    res.send("PUT Request: Data Updated");
+});
+```
+
+---
+
+## 📌 DELETE Request
+
+Used to delete data.
+
+```js
+app.delete('/delete', (req, res) => {
+    res.send("Data Deleted");
+});
+```
+
+---
+
+## 📌 Universal Middleware - `.use()`
+
+Runs for every route.
+
+```js
+app.use((req, res, next) => {
+    console.log(req.url, req.method);
+    next();
+});
+```
+
+---
+
+# 🌐 Express Deep Dive – How It Works Internally
+
+### Flow of Request → Response:
+
+```
+User Request
+       ↓
+Middleware (can modify req/res)
+       ↓
+Route Handler (get/post/use)
+       ↓
+Response sent to client
+```
+
+### Layout:
+
+```
+app.use()    → runs always
+app.get()    → runs for GET
+app.post()   → runs for POST
+app.all()    → runs for all methods
+```
+
+---
+
+# 🏗 Handling Multiple Routes
+
+```js
+app.get('/home', (req, res) => {
+    res.send("Home Page");
+});
+
+app.get('/about', (req, res) => {
+    res.send("About Page");
+});
+```
+
+---
+
+# ✨ Taking User Input (Query Params)
+
+```js
+app.get('/search', (req, res) => {
+    const q = req.query.q;
+    res.send(`You searched for ${q}`);
+});
+```
+
+URL Example:
+
+```
+/search?q=express
+```
+
+---
+
+# 📑 Taking User Input (URL Params)
+
+```js
+app.get('/user/:id', (req, res) => {
+    res.send(`User ID is ${req.params.id}`);
+});
+```
+
+---
+
+# 📝 Taking Form Input in Express
+
+To read POST form data:
+
+### Step 1: Enable body parser
+
+```js
+app.use(express.urlencoded({ extended: true }));
+```
+
+### Step 2: Handle form
+
+```js
+app.post('/register', (req, res) => {
+    const { username } = req.body;
+    res.send(`Welcome ${username}`);
+});
+```
+
+---
+
+# 🔁 Redirecting a Request
+
+```js
+app.get('/google', (req, res) => {
+    res.redirect('https://google.com');
+});
+```
+
+---
+
+# 🎯 Final Summary
+
+```
+Express.js = Fast Node.js framework.
+Middleware = Pre-processing function.
+GET = Fetch data.
+POST = Send data.
+PUT = Update data.
+DELETE = Remove data.
+.use() = Runs for all methods.
+Routing = Different URLs → Different responses.
+Form Handling = express.urlencoded().
+Redirect = res.redirect().
+```
+
+---
+
+
 
 
 

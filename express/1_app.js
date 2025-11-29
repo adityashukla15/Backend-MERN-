@@ -1,5 +1,5 @@
 const express = require('express');
-
+const  bodyParser=require('body-parser')//this will parse the req in console
 const app = express();
 
 app.get("/", (req, res, next) => {
@@ -7,9 +7,16 @@ app.get("/", (req, res, next) => {
   //res.send("<p>Came from First Middleware</p>");
   next();
 });
+app.get("/submit-details", (req, res, next) => {
+  console.log("Came in first middleware", req.url, req.method);
+  //res.send("<p>Came from First Middleware</p>");
+  next();
+});
+
+app.use(bodyParser.urlencoded())
 
 app.post("/submit-details", (req, res, next) => {
-  console.log("Came in second middleware", req.url, req.method);
+  console.log("Came in second middleware", req.url, req.method,req.body);
   res.send("<p>Welcome to Complete Coding Nodejs series</p>");
 });
 

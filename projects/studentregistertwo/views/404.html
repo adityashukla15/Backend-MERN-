@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body{
+            height:100vh;
+            background:#0f172a;
+            color:#e2e8f0;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            padding:20px;
+            text-align:center;
+        }
+
+        h1{
+            font-size:3rem;
+            font-weight:700;
+            margin-bottom:15px;
+            color:#38bdf8;
+        }
+
+        p{
+            max-width:600px;
+            font-size:1.1rem;
+            margin-bottom:25px;
+            color:#cbd5e1;
+            line-height:1.6;
+        }
+
+        a{
+            display:inline-block;
+            padding:12px 22px;
+            background:#38bdf8;
+            color:#0f172a;
+            text-decoration:none;
+            font-weight:600;
+            border-radius:8px;
+            transition:0.3s ease;
+        }
+
+        a:hover{
+            background:#7dd3fc;
+        }
+
+        .box{
+            padding:40px;
+            background:rgba(255,255,255,0.05);
+            border-radius:16px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border:1px solid rgba(255,255,255,0.08);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h1>404 - Page Not Found</h1>
+        <p>
+            Looks like the page you're trying to reach has wandered off into the void.  
+            Don't worry — we have maps, a compass, and a friendly button to guide you back.
+        </p>
+        <a href="/">Go Back to Home</a>
+    </div>
+</body>
+</html>

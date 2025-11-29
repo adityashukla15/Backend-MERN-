@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-
+const bodyParser=require('body-parser')
 // To parse POST form data
 app.use(express.urlencoded({ extended: true }));
 
@@ -120,8 +120,10 @@ app.get('/register', (req, res, next) => {
     `);
 });
 
+app.use(bodyParser.urlencoded())
+
 app.post('/register', (req, res, next) => {
-    console.log("Posting request with method", req.method);
+    console.log("Posting request with method", req.method,req.body);
     res.send(`
     <html>
     <head>
